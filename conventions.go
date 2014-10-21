@@ -116,3 +116,42 @@ func (e Example) Method() (bool, error) {
 // The gofmt tool will not automatically put methods that are this short on one
 // line, but it will not break them down into multiple lines either.
 func (e Example) ShortMethod() int { return 0 }
+
+// GetTuple is an example method for error handling and scopes. When a method
+// returns error as single value, handle it in one line. When returning err
+// is out of scope, it looks like it is going to be used in somewhere else
+func (e Example) GetTuple() (int, error) {
+	number := 3
+
+	if err := e.getSingleError(); err != nil {
+		return 0, err
+	}
+
+	return number, nil
+}
+
+// LastMethodCall is an example of returning error result for the last provoked method.
+// When last called method returns an error, there is no need to make a nil check, if
+// there is not any special need for error handling.
+func (e Example) LastMethodCall() error {
+	_, err := e.GetTuple()
+	if err != nil {
+		return err
+	}
+
+	// no need for this
+	// if err := e.getSingleError(); err != nil {
+	// 	return err
+	// }
+
+	// or this
+	// err := e.getSingleError()
+	//
+	// return err
+
+	return e.getSingleError()
+}
+
+func (e Example) getSingleError() error {
+	return ErrStupidMistake
+}
